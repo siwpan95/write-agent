@@ -37,11 +37,19 @@ write-agent/
 │   │   ├── tools.py           # 创作工具 + 知识库问答
 │   │   └── engine.py          # 对话编排与模式路由
 │   └── static/                # 前端单页（index.html / app.js / style.css）
+├── tests/                     # 正式 pytest 套件（检索/创作/对话，自包含 Mock）
+│   ├── conftest.py            # 注入测试环境变量 + 临时语料建索引
+│   ├── test_retrieval.py      # 检索/引用四要素/未查到闸门
+│   ├── test_novel.py          # 大纲/章节/续写/改写/风格/走向
+│   └── test_chat.py           # kb 引用硬约束 + create 多轮对话
 ├── scripts/
 │   ├── build_kb.py            # 知识库构建 CLI
-│   └── ci_smoke.py            # 自包含冒烟测试（Mock + 临时语料，CI/本地通用）
+│   └── ci_smoke.py            # 框架无关冒烟测试（Mock + 临时语料，CI/本地通用）
 ├── docs/KB_ROOT配置说明.md    # 给下载者：如何指向自己的素材目录并建索引
-├── .github/workflows/ci.yml   # GitHub Actions：每次 push/PR 跑 ci_smoke.py
+├── pytest.ini                 # pytest 配置（testpaths / pythonpath）
+├── requirements-dev.txt       # 测试依赖（pytest）
+├── .github/workflows/ci.yml   # GitHub Actions：push/PR 跑 pytest + 冒烟
+├── .workflow/ci.yml           # Gitee Go 流水线：等价运行 pytest + 冒烟
 ├── data/                      # 运行时生成（索引、会话），已 gitignore
 ├── requirements.txt
 ├── Dockerfile
@@ -144,14 +152,26 @@ docker compose up --build      # 访问 http://localhost:8000
 
 ## 测试与持续集成
 
-仓库自带**自包含冒烟测试** `scripts/ci_smoke.py`：它在临时目录生成极小语料、以 `MOCK_LLM=true` 构建索引并跑通检索/引用/未查到闸门与全部创作接口（经 FastAPI `TestClient`），**不依赖真实知识库或 LLM key**，可在任意干净环境验证全链路：
+两套测试均**完全自包含**：用临时语料 + `MOCK_LLM=true` 构建索引，**不依赖真实知识库或 LLM key**，覆盖检索/引用四要素/未查到闸门、大纲/章节/续写/改写/风格切换/剧情走向、以及 `kb` 与 `create` 双模式对话。
+
+### 本地跑测试
 
 ```bash
-pip install -r requirements.txt
-python scripts/ci_smoke.py
+pip install -r requirements-dev.txt
+python -m pytest tests/ -q        # 正式 pytest 套件
+python scripts/ci_smoke.py         # 框架无关的冒烟（无需 pytest）
 ```
 
-CI 由 `.github/workflows/ci.yml` 提供：每次 push / PR 到 `master`/`main` 自动执行该脚本（在 GitHub 上运行时生效；若仅托管于 Gitee，可把同一脚本接进 Gitee Go 或本地 pre-commit）。
+### 持续集成
+
+| 平台 | 配置 | 触发 |
+| --- | --- | --- |
+| GitHub Actions | `.github/workflows/ci.yml` | push / PR 到 `master`/`main` |
+| Gitee Go | `.workflow/ci.yml` | push 到 `master`/`main` |
+
+两者都会执行 `pytest tests/` 与 `scripts/ci_smoke.py`。
+
+> **Gitee Go 启用说明（需你在 Gitee 网页操作一次）**：仓库已内置 `.workflow/ci.yml`；但 Gitee Go 需先在仓库「DevOps → Gitee Go」中开通并绑定构建资源（可能需绑定手机号）。开通后 Gitee 会自动识别 `.workflow/` 下的配置并在 push 时触发。若流水线未自动触发，可进入流水线编辑页按 GUI 提示手动关联——GUI 可能会把配置重写为其规范格式，属正常现象，不影响本机提交的文件。
 
 ---
 

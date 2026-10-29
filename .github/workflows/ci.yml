@@ -7,7 +7,7 @@ on:
     branches: [master, main]
 
 jobs:
-  smoke-test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,6 +23,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run pytest suite
+        run: python -m pytest tests/ -q
 
       - name: Self-contained smoke test (Mock LLM + tiny corpus)
         # ci_smoke.py 自带临时语料并以 Mock 模式运行，不依赖真实 KB 或 LLM key

@@ -1,0 +1,32 @@
+# ========================================================
+# Gitee Go 流水线：等价运行 pytest 套件 + 自包含冒烟测试
+# 功能：在 push 到 master/main 时，以 Mock 模式（无需真实 key）
+#       构建临时知识库并验证全链路（检索/引用/未查到/创作/对话）
+# ========================================================
+version: '1.0'
+name: ci
+displayName: 'write-agent CI'
+
+triggers:
+  push:
+    branches:
+      include:
+        - master
+        - main
+
+stages:
+  - stage:
+      name: test
+      displayName: '测试与冒烟'
+      steps:
+        - step: build@python
+          name: pytest
+          displayName: 'Pytest 测试 + 冒烟'
+          pythonVersion: '3.11'
+          commands:
+            - python3 -m pip install --upgrade pip
+            - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+            - pip3 install -r requirements.txt
+            - pip3 install -r requirements-dev.txt
+            - python3 -m pytest tests/ -q
+            - python3 scripts/ci_smoke.py

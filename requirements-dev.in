@@ -1,0 +1,6 @@
+# 开发 / 测试依赖（自包含：含运行时，最终由 requirements-dev.txt 哈希锁定）
+# `make install-dev` / CI 只需安装这一份即可跑通全部测试。
+-r requirements.in
+pytest==9.2.0
+httpx
+pytest-cov

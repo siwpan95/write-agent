@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# 供应链加固：requirements.txt 为 pip-compile 生成的哈希锁定文件，--require-hashes 强制校验每个包的哈希
+RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 COPY . .
 

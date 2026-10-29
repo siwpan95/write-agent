@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# write-agent 预提交钩子
+# 安装：make hooks-install （或手动 cp .githooks/pre-commit .git/hooks/pre-commit && chmod +x）
+# 作用：提交前自动运行 pytest 套件 + 自包含冒烟测试；任一失败则阻断提交。
+# 跳过：git commit --no-verify
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# 选择 Python 解释器（优先虚拟环境）
+if [ -x "$ROOT/.venv/Scripts/python" ]; then
+  PY="$ROOT/.venv/Scripts/python"
+elif [ -x "$ROOT/.venv/bin/python" ]; then
+  PY="$ROOT/.venv/bin/python"
+else
+  echo "⚠️  未检测到 .venv，跳过预提交测试。运行 'make install-dev' 后提交将自动校验（或 git commit --no-verify 强制提交）。"
+  exit 0
+fi
+
+echo "▶ 运行 pytest 正式套件"
+if ! "$PY" -m pytest tests/ -q; then
+  echo "❌ pytest 失败，提交已阻断。修复测试后重试，或用 git commit --no-verify 强制跳过。"
+  exit 1
+fi
+
+echo "▶ 运行自包含冒烟测试（Mock LLM + 临时语料）"
+if ! "$PY" scripts/ci_smoke.py; then
+  echo "❌ ci_smoke 失败，提交已阻断。修复后重试，或用 git commit --no-verify 强制跳过。"
+  exit 1
+fi
+
+echo "✅ 预提交检查通过"

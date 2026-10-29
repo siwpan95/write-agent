@@ -1,0 +1,11 @@
+# 顶层运行时依赖（人工维护；锁定版本由 requirements.txt 经 pip-compile 生成）
+# 修改后请运行 `make lock` 重新生成哈希锁文件，并在本机 venv 验证后再提交。
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+openai==3.41.0
+pydantic==2.14.1
+pydantic-settings==2.16.2
+python-dotenv==1.2.4
+numpy==2.5.4
+rank_bm25==0.2.2
+jieba==0.42.1

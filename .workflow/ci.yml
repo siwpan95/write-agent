@@ -26,7 +26,6 @@ stages:
           commands:
             - python3 -m pip install --upgrade pip
             - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-            - pip3 install -r requirements.txt
-            - pip3 install -r requirements-dev.txt
+            - pip3 install --require-hashes -r requirements-dev.txt
             - python3 -m pytest tests/ -q
             - python3 scripts/ci_smoke.py

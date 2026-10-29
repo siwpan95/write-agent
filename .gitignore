@@ -1,0 +1,29 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ===== 环境变量（含密钥，禁止入库）=====
+.env
+.env.local
+
+# ===== 运行时生成的数据 =====
+data/kb/
+data/sessions/
+*.index
+*.pkl
+
+# ===== 编辑器/系统 =====
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ===== 日志 =====
+*.log

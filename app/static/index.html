@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小说创作智能 Agent</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="brand">小说创作智能 Agent<small>Multi-turn · 知识库引用 · OpenAI 兼容</small></div>
+      <button class="btn primary block" id="newSessionBtn">+ 新建会话</button>
+      <div class="session-list" id="sessionList"></div>
+    </aside>
+
+    <!-- 主区域 -->
+    <main class="main">
+      <div class="topbar">
+        <div class="mode-toggle" id="modeToggle">
+          <button data-mode="create" class="active create">创作模式</button>
+          <button data-mode="kb">知识库问答</button>
+        </div>
+        <span class="spacer"></span>
+        <span class="kb-status" id="kbStatus"><span class="dot"></span>知识库：检测中…</span>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty" id="emptyHint">从左侧新建会话，或在下方填写「新书设定」后生成大纲。</div>
+      </div>
+
+      <div class="composer">
+        <!-- 设定面板（创作模式） -->
+        <div class="panel hidden" id="setupPanel">
+          <h3>新书设定（写入会话，用于保持连贯）</h3>
+          <div class="row2">
+            <div class="field"><label>主题</label><input id="f-theme" placeholder="如：废土上的位面旅人" /></div>
+            <div class="field"><label>题材</label><input id="f-genre" placeholder="如：废土 / 玄幻 / 无限流" /></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>风格</label><input id="f-style" placeholder="如：冷硬写实 / 轻松吐槽" /></div>
+            <div class="field"><label>剧情走向</label><input id="f-plot" placeholder="可选：作者最新调整方向" /></div>
+          </div>
+          <div class="field"><label>角色设定</label><textarea id="f-chars" rows="2" placeholder="主角、配角、阵营、能力体系…"></textarea></div>
+          <div class="toolbar">
+            <button class="btn primary sm" id="saveSetupBtn">保存设定</button>
+            <button class="btn sm" id="genOutlineBtn">生成大纲</button>
+          </div>
+        </div>
+
+        <!-- 工具条 -->
+        <div class="toolbar" id="toolbar">
+          <button class="btn sm" data-act="chapter">✍️ 写章节</button>
+          <button class="btn sm" data-act="continue">⏭️ 续写</button>
+          <button class="btn sm" data-act="rewrite">🔁 改写</button>
+          <button class="btn sm" data-act="style">🎭 风格切换</button>
+          <button class="btn sm" id="toggleSetupBtn">⚙️ 新书设定</button>
+        </div>
+
+        <div class="input-row">
+          <textarea id="input" placeholder="输入消息…（创作模式可与 Agent 多轮讨论情节/人物；知识库模式提问将逐条标注依据）"></textarea>
+          <button class="btn primary" id="sendBtn">发送</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

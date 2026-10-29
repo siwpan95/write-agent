@@ -1,0 +1,16 @@
+# 核心依赖（必需）
+fastapi>=0.110
+uvicorn[standard]>=0.27
+openai>=1.30
+pydantic>=2.6
+pydantic-settings>=2.2
+python-dotenv>=1.0
+numpy>=1.26
+rank_bm25>=0.2.2
+jieba>=0.42
+
+# 可选：稠密向量检索（仅在 KB_USE_EMBED=true 时需要）
+# 二选一即可：
+#   faiss-cpu>=1.8          # 本地向量索引
+#   sentence-transformers   # 本地中文嵌入模型（如 bge-small-zh）
+# 或使用远程 OpenAI 兼容 embeddings API（配置 EMBED_BASE_URL / EMBED_API_KEY / EMBED_MODEL）

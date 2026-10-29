@@ -1,0 +1,32 @@
+# 小说创作智能 Agent · 编排配置
+# 用法：
+#   1. cp .env.example .env 并填入 LLM_API_KEY
+#   2. docker compose up --build
+#   3. 浏览器打开 http://localhost:8000
+#
+# 注意：
+#   - Windows(Docker Desktop) 挂载路径用 G:/repos/write
+#   - Linux/macOS 请改为 /g/repos/write（或你本机写作工作区的绝对路径）
+#   - KB_ROOT 指向容器内的挂载点 /kb（只读）
+services:
+  write-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+      LLM_TEMPERATURE: ${LLM_TEMPERATURE:-0.8}
+      MOCK_LLM: ${MOCK_LLM:-false}
+      KB_ROOT: /kb
+      KB_USE_EMBED: ${KB_USE_EMBED:-false}
+      EMBED_BASE_URL: ${EMBED_BASE_URL:-}
+      EMBED_API_KEY: ${EMBED_API_KEY:-}
+      EMBED_MODEL: ${EMBED_MODEL:-}
+      HOST: 0.0.0.0
+      PORT: 8000
+    volumes:
+      - ./data:/app/data
+      - G:/repos/write:/kb:ro
+    restart: unless-stopped

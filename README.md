@@ -37,7 +37,11 @@ write-agent/
 │   │   ├── tools.py           # 创作工具 + 知识库问答
 │   │   └── engine.py          # 对话编排与模式路由
 │   └── static/                # 前端单页（index.html / app.js / style.css）
-├── scripts/build_kb.py        # 知识库构建 CLI
+├── scripts/
+│   ├── build_kb.py            # 知识库构建 CLI
+│   └── ci_smoke.py            # 自包含冒烟测试（Mock + 临时语料，CI/本地通用）
+├── docs/KB_ROOT配置说明.md    # 给下载者：如何指向自己的素材目录并建索引
+├── .github/workflows/ci.yml   # GitHub Actions：每次 push/PR 跑 ci_smoke.py
 ├── data/                      # 运行时生成（索引、会话），已 gitignore
 ├── requirements.txt
 ├── Dockerfile
@@ -64,6 +68,8 @@ python -m app.main              # 启动，默认 http://127.0.0.1:8000
 ```
 
 浏览器打开 `http://127.0.0.1:8000`。
+
+> **下载者注意**：仓库默认 `KB_ROOT=G:/repos/write` 指向作者本机目录，你机器上不存在。克隆后请先阅读 [docs/KB_ROOT配置说明.md](docs/KB_ROOT配置说明.md)，把它改成你自己的素材目录并运行 `python scripts/build_kb.py`，知识库问答才会有依据。
 
 ### 2) Mock 模式（无 Key 也能跑通全链路）
 
@@ -133,6 +139,19 @@ docker compose up --build      # 访问 http://localhost:8000
 | GET | `/api/kb/status` | 知识库状态 |
 | POST | `/api/kb/build` | 重建索引 |
 | POST | `/api/kb/query` | 直接检索（不调大模型，用于核对） |
+
+---
+
+## 测试与持续集成
+
+仓库自带**自包含冒烟测试** `scripts/ci_smoke.py`：它在临时目录生成极小语料、以 `MOCK_LLM=true` 构建索引并跑通检索/引用/未查到闸门与全部创作接口（经 FastAPI `TestClient`），**不依赖真实知识库或 LLM key**，可在任意干净环境验证全链路：
+
+```bash
+pip install -r requirements.txt
+python scripts/ci_smoke.py
+```
+
+CI 由 `.github/workflows/ci.yml` 提供：每次 push / PR 到 `master`/`main` 自动执行该脚本（在 GitHub 上运行时生效；若仅托管于 Gitee，可把同一脚本接进 Gitee Go 或本地 pre-commit）。
 
 ---
 

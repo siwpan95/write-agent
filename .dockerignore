@@ -1,0 +1,16 @@
+# 构建上下文排除规则：避免把密钥、虚拟环境、索引数据、CI 配置打进镜像
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+.git/
+.github/
+.workflow/
+tests/
+
+# 排除本机密钥；但保留 .env.example 作为模板
+.env
+.env.*
+!.env.example

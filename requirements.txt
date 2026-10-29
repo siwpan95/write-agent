@@ -1,13 +1,14 @@
-# 核心依赖（必需）
-fastapi>=0.110
-uvicorn[standard]>=0.27
-openai>=1.30
-pydantic>=2.6
-pydantic-settings>=2.2
-python-dotenv>=1.0
-numpy>=1.26
-rank_bm25>=0.2.2
-jieba>=0.42
+# 核心依赖（必需）—— 已锁定到经 CI/本地验证的版本，保证可复现构建
+# 如需升级，请在本机 venv 中验证后再更新此处版本号。
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+openai==3.41.0
+pydantic==2.14.1
+pydantic-settings==2.16.2
+python-dotenv==1.2.4
+numpy==2.5.4
+rank_bm25==0.2.2
+jieba==0.42.1
 
 # 可选：稠密向量检索（仅在 KB_USE_EMBED=true 时需要）
 # 二选一即可：

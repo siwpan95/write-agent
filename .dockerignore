@@ -8,7 +8,9 @@ data/
 .git/
 .github/
 .workflow/
-tests/
+
+# 注意：tests/ 必须保留在构建上下文中——多阶段构建的 test 阶段要用它做容器内自测。
+# 它仅存在于 test 阶段，runtime 阶段不会复制，不会污染最终镜像。
 
 # 排除本机密钥；但保留 .env.example 作为模板
 .env
